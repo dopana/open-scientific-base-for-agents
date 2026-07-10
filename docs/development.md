@@ -121,8 +121,6 @@ open-scientific-base-for-agents/
 │   ├── development.md
 │   └── agent-integration.md
 ├── .env.example               # Frontend environment variables
-├── rust-toolchain.toml        # Rust version configuration
-├── Cargo.toml                 # Workspace-level Cargo config
 └── README.md                  # Project overview
 ```
 

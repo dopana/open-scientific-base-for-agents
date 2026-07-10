@@ -44,7 +44,7 @@ open-scientific-base-for-agents/
 │   │   ├── models.rs               # Serde data models
 │   │   ├── mock.rs                 # In-memory data store
 │   │   └── frontmatter.rs          # YAML frontmatter parser
-│   ├── Cargo.toml
+│   ├── Cargo.toml                  # Rust dependencies
 │   ├── wrangler.toml               # Cloudflare Workers config
 │   └── schema.sql                  # D1 database schema
 ├── frontend/                       # React 19 UI
