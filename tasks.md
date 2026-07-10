@@ -128,6 +128,13 @@
 - docs/plans/architecture-plan.md — ideal architecture plan ✅
 - docs/plans/implementation-roadmap.md — phased roadmap ✅
 - docs/plans/frontend-roadmap.md — frontend enhancements ✅
+- docs/plans/data-model-plan.md — data model decisions ✅
+- docs/plans/api-design-plan.md — API design philosophy ✅
+- docs/plans/testing-strategy.md — testing strategy ✅
+- docs/plans/security-plan.md — security architecture ✅
+- docs/plans/deployment-plan.md — deployment pipeline ✅
+- docs/plans/content-expansion-plan.md — content growth strategy ✅
+- docs/plans/agent-protocol-plan.md — AI agent protocol ✅
 
 ## Frontend Enhancements 📋 *(separate track)*
 
