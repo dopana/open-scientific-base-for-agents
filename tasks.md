@@ -115,6 +115,15 @@
 | Agent authentication & rate limiting | 📋 |
 | Agent usage analytics | 📋 |
 
+## CLI — Rust CLI for AI Agents ✅
+
+| Task | Status |
+|------|--------|
+| cli/Cargo.toml — clap, reqwest, serde, tokio, colored | ✅ |
+| cli/src/main.rs — all 6 API commands + auth + JSON output | ✅ |
+| cli/README.md — CLI usage docs | ✅ |
+| `cargo check` passes | ⏳ |
+
 ## Documentation ✅ *(cross-cutting, not a numbered phase)*
 
 - docs/README.md — documentation index ✅

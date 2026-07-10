@@ -1,0 +1,28 @@
+[package]
+name = "osb"
+version = "0.1.0"
+description = "Open Scientific Base CLI — for AI agents to interact with the knowledge base API"
+edition = "2024"
+
+[dependencies]
+# CLI argument parsing
+clap = { version = "4", features = ["derive", "env"] }
+
+# HTTP client
+reqwest = { version = "0.12", features = ["json", "native-tls"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Terminal output
+colored = "2"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
