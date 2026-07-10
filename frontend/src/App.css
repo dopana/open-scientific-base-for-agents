@@ -1,28 +1,56 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+/* ==============================
+   Base styles for the app
+   ============================== */
 
 body {
   margin: 0;
-  color: #fff;
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  background-image: linear-gradient(to bottom, #020917, #101725);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #020617; /* slate-950 */
+  color: #e2e8f0;
 }
 
-.content {
-  display: flex;
-  min-height: 100vh;
-  line-height: 1.1;
-  text-align: center;
-  flex-direction: column;
-  justify-content: center;
+#root {
+  height: 100vh;
+  overflow: hidden;
 }
 
-.content h1 {
-  font-size: 3.6rem;
-  font-weight: 700;
+/* ==============================
+   Custom Scrollbar Styles
+   ============================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.content p {
-  font-size: 1.2rem;
-  font-weight: 400;
-  opacity: 0.5;
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.5);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+}
+
+/* ==============================
+   Selection styles
+   ============================== */
+
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: #fff;
 }

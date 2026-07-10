@@ -1,0 +1,125 @@
+# ============================================================
+# D1 Database Sync
+# Syncs markdown data files to Cloudflare D1 on every push
+# that modifies the data/ directory.
+#
+# This bridge keeps D1 in sync with Git — the single source
+# of truth for all markdown files.
+# ============================================================
+
+name: Sync D1 Database
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "api/schema.sql"
+  workflow_dispatch:
+    # Allow manual trigger for initial seed or recovery
+
+jobs:
+  sync-d1:
+    name: Sync data files to Cloudflare D1
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install wrangler
+        run: npm install -g wrangler
+
+      - name: Install Python dependencies
+        run: python3 -m pip install pyyaml
+
+      - name: Ensure D1 database exists
+        run: npx wrangler d1 create scientific-base || true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy D1 Schema
+        run: |
+          npx wrangler d1 execute scientific-base \
+            --file=api/schema.sql \
+            --remote
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Sync all markdown files to D1
+        run: |
+          # Iterate through all markdown files in data/ and insert/update each
+          find data -name '*.md' | while read -r filepath; do
+            echo "Syncing: $filepath"
+
+            # Extract the relative path for storage
+            rel_path="$filepath"
+
+            # Read the file content and escape for SQL
+            content=$(cat "$filepath" | python3 -c "
+import sys, json, yaml, re
+
+text = sys.stdin.read()
+# Parse frontmatter
+match = re.match(r'^---\\s*\\n(.*?)\\n---\\s*\\n(.*)', text, re.DOTALL)
+if not match:
+    print(f'ERROR: No frontmatter in {sys.argv[1]}', file=sys.stderr)
+    sys.exit(1)
+
+yaml_str = match.group(1)
+body = match.group(2)
+fm = yaml.safe_load(yaml_str)
+
+# Output as JSON for the shell to parse
+print(json.dumps({
+    'id': fm['id'],
+    'title': fm['title'],
+    'category': fm['category'],
+    'tags': json.dumps(fm.get('tags', [])),
+    'content': text,
+    'version': fm.get('version', '1.0.0'),
+    'last_updated': fm.get('last_updated', ''),
+    'path': sys.argv[1]
+}))
+" "$rel_path")
+
+            # Parse the JSON output and construct SQL
+            id=$(echo "$content" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+            title=$(echo "$content" | python3 -c "import sys,json; print(json.load(sys.stdin)['title'])" | sed "s/'/''/g")
+            category=$(echo "$content" | python3 -c "import sys,json; print(json.load(sys.stdin)['category'])" | sed "s/'/''/g")
+            tags=$(echo "$content" | python3 -c "import sys,json; print(json.load(sys.stdin)['tags'])" | sed "s/'/''/g")
+            version=$(echo "$content" | python3 -c "import sys,json; print(json.load(sys.stdin)['version'])" | sed "s/'/''/g")
+            last_updated=$(echo "$content" | python3 -c "import sys,json; print(json.load(sys.stdin)['last_updated'])" | sed "s/'/''/g")
+            path=$(echo "$content" | python3 -c "import sys,json; print(json.load(sys.stdin)['path'])" | sed "s/'/''/g")
+            content_escaped=$(echo "$content" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)['content']
+# Escape single quotes for SQL
+data = data.replace(\"'\", \"''\")
+print(data)
+")
+
+            # UPSERT into D1
+            npx wrangler d1 execute scientific-base \
+              --command="INSERT INTO files (id, path, title, category, tags, content, version, last_updated) VALUES ('$id', '$path', '$title', '$category', '$tags', '$content_escaped', '$version', '$last_updated') ON CONFLICT(id) DO UPDATE SET title=excluded.title, category=excluded.category, tags=excluded.tags, content=excluded.content, version=excluded.version, last_updated=excluded.last_updated;" \
+              --remote
+
+            echo "✓ Synced: $id ($filepath)"
+          done
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Summary
+        run: |
+          synced=$(find data -name '*.md' | wc -l)
+          echo "## ✅ D1 Sync Complete" >> $GITHUB_STEP_SUMMARY
+          echo "Successfully synced **${synced}** markdown files to D1." >> $GITHUB_STEP_SUMMARY

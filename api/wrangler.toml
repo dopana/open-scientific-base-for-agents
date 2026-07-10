@@ -1,0 +1,20 @@
+# Cloudflare Workers configuration for Open Scientific Base API
+# Deploy with: npx wrangler deploy
+# Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "open-scientific-base-api"
+main = "build/worker/shim.mjs"
+compatibility_date = "2024-12-18"
+compatibility_flags = ["nodejs_compat"]
+
+# Worker settings
+workers_dev = true
+
+[vars]
+ENVIRONMENT = "production"
+
+# D1 Database binding (uncomment and set database_id when ready)
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "scientific-base"
+# database_id = "<your-database-id>"
