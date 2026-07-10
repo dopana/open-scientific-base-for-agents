@@ -174,7 +174,7 @@ function renderInline(text: string, baseKey: number = 0): React.ReactNode[] {
             href={token.href}
             className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors"
             target="_blank"
-            rel="noopener"
+            rel="noreferrer"
           >
             {token.text}
           </a>

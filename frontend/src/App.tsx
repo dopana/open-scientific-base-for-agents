@@ -2,8 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getFile, listCategories, listFiles, searchFiles } from './api';
 import FileList from './components/FileList';
 import FileViewer from './components/FileViewer';
+import GitHubImport from './components/GitHubImport';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
+import { fetchMarkdownFromGitHub } from './github';
+import { validateMarkdown, type ValidationResult } from './validation';
 import type { CategoryInfo, FileEntry, FileSummary } from './types';
 import './App.css';
 
@@ -16,8 +19,10 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingContent, setLoadingContent] = useState(false);
+  const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Load categories on mount
   useEffect(() => {
@@ -93,6 +98,37 @@ export default function App() {
     setSelectedFile(null);
   }, []);
 
+  const handleImport = useCallback(async (githubUrl: string, filePath: string) => {
+    setImporting(true);
+    setError(null);
+    setValidationResult(null);
+
+    try {
+      const content = await fetchMarkdownFromGitHub(githubUrl, filePath);
+      const validation = validateMarkdown(content);
+      setValidationResult(validation);
+
+      if (validation.valid) {
+        // Create a temporary file entry to display the imported content
+        const tempFile: FileEntry = {
+          id: 'imported-temp',
+          path: filePath,
+          title: 'Imported from GitHub',
+          category: 'imported',
+          tags: [],
+          content,
+          version: '1.0.0',
+          last_updated: new Date().toISOString().split('T')[0],
+        };
+        setSelectedFile(tempFile);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to import file');
+    } finally {
+      setImporting(false);
+    }
+  }, []);
+
   return (
     <div className="h-screen flex flex-col bg-slate-950 text-slate-200 overflow-hidden">
       <Header
@@ -123,6 +159,38 @@ export default function App() {
               <p className="text-xs text-red-400">{error}</p>
             </div>
           )}
+
+          {/* Validation Results */}
+          {validationResult && (
+            <div className="mx-4 mt-3 px-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg">
+              <p className="text-xs font-medium mb-2">
+                {validationResult.valid ? (
+                  <span className="text-green-400">✓ Valid format</span>
+                ) : (
+                  <span className="text-red-400">✗ Invalid format</span>
+                )}
+              </p>
+              {validationResult.errors.length > 0 && (
+                <ul className="text-xs text-red-400 list-disc list-inside space-y-1">
+                  {validationResult.errors.map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                </ul>
+              )}
+              {validationResult.warnings.length > 0 && (
+                <ul className="text-xs text-yellow-400 list-disc list-inside space-y-1 mt-2">
+                  {validationResult.warnings.map((warn, i) => (
+                    <li key={i}>{warn}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {/* GitHub Import */}
+          <div className="mx-4 mt-3">
+            <GitHubImport onImport={handleImport} loading={importing} />
+          </div>
 
           <FileList
             files={files}
