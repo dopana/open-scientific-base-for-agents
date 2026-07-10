@@ -1,4 +1,4 @@
-# Open Scientific Base Documentation
+# Open Scientific Base Documentation for AI Agents
 
 > A structured knowledge repository for AI agents, powered by Markdown, Rust, and Cloudflare Edge Computing.
 
@@ -69,7 +69,6 @@ open-scientific-base-for-agents/
 ├── .github/workflows/
 │   └── sync-d1.yml                 # D1 sync CI/CD pipeline
 └── docs/                           # You are here
-    ├── README.md                   # This file
     ├── architecture.md
     ├── api-reference.md
     ├── data-format.md
