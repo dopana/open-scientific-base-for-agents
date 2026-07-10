@@ -22,7 +22,22 @@ export default function App() {
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [fileListOpen, setFileListOpen] = useState(true);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // Apply theme to document
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
+  }, [theme]);
 
   // Load categories on mount
   useEffect(() => {
@@ -129,28 +144,86 @@ export default function App() {
     }
   }, []);
 
+  const handleEditFile = useCallback(async (content: string) => {
+    if (!selectedFile) return;
+
+    try {
+      // For now, just update the local state
+      // In a real implementation, this would call the API to update the file
+      setSelectedFile({
+        ...selectedFile,
+        content,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update file');
+    }
+  }, [selectedFile]);
+
   return (
     <div className="h-screen flex flex-col bg-slate-950 text-slate-200 overflow-hidden">
       <Header
         onSearch={handleSearch}
         searchQuery={searchQuery}
         totalFiles={files.length}
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        onToggleFileList={() => setFileListOpen(!fileListOpen)}
+        onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        theme={theme}
       />
 
-      <div className="flex-1 flex min-h-0">
-        <Sidebar
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={handleSelectCategory}
-        />
+      <div className="flex-1 flex min-h-0 relative">
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <div
+          className={`fixed lg:relative z-50 lg:z-auto transition-transform duration-300 ease-in-out lg:transition-none
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            w-64 shrink-0 flex flex-col border-r border-slate-800/50 bg-slate-950/20 h-full`}
+        >
+          <Sidebar
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={handleSelectCategory}
+          />
+        </div>
 
         {/* File List Panel */}
-        <div className="w-96 shrink-0 flex flex-col border-r border-slate-800/50 bg-slate-950/20">
+        <div
+          className={`fixed md:relative z-40 md:z-auto transition-transform duration-300 ease-in-out md:transition-none
+            ${fileListOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
+            w-full md:w-96 shrink-0 flex flex-col border-r border-slate-800/50 bg-slate-950/20 h-full`}
+        >
           {/* Panel Header */}
-          <div className="px-6 py-3 border-b border-slate-800/30">
+          <div className="px-6 py-3 border-b border-slate-800/30 flex items-center justify-between">
             <h2 className="text-sm font-medium text-slate-400 uppercase tracking-wider">
               {searchQuery ? 'Search Results' : selectedCategory || 'All Files'}
             </h2>
+            <button
+              type="button"
+              onClick={() => setFileListOpen(false)}
+              className="md:hidden p-1 rounded text-slate-400 hover:text-slate-200"
+              aria-label="Close file list"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           </div>
 
           {/* Error Banner */}
@@ -201,9 +274,16 @@ export default function App() {
         </div>
 
         {/* File Viewer Panel */}
-        <div className="flex-1 flex flex-col min-w-0">
-          <FileViewer file={selectedFile} loading={loadingContent} />
+        <div className="flex-1 flex flex-col min-w-0 hidden md:flex">
+          <FileViewer file={selectedFile} loading={loadingContent} onEdit={handleEditFile} />
         </div>
+
+        {/* Mobile File Viewer (shown when file list is closed) */}
+        {!fileListOpen && selectedFile && (
+          <div className="flex-1 flex flex-col min-w-0 md:hidden">
+            <FileViewer file={selectedFile} loading={loadingContent} onEdit={handleEditFile} />
+          </div>
+        )}
       </div>
     </div>
   );

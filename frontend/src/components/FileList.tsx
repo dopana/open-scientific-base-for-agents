@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { CATEGORY_MAP, formatDate } from '../config';
 import type { FileSummary } from '../types';
 
@@ -14,6 +15,52 @@ export default function FileList({
   onSelectFile,
   loading,
 }: FileListProps) {
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (loading || files.length === 0) return;
+
+      const currentIndex = files.findIndex((f) => f.id === selectedId);
+
+      switch (e.key) {
+        case 'ArrowDown': {
+          e.preventDefault();
+          const nextIndex = currentIndex < files.length - 1 ? currentIndex + 1 : 0;
+          onSelectFile(files[nextIndex].id);
+          break;
+        }
+        case 'ArrowUp': {
+          e.preventDefault();
+          const prevIndex = currentIndex > 0 ? currentIndex - 1 : files.length - 1;
+          onSelectFile(files[prevIndex].id);
+          break;
+        }
+        case 'Home':
+          e.preventDefault();
+          onSelectFile(files[0].id);
+          break;
+        case 'End':
+          e.preventDefault();
+          onSelectFile(files[files.length - 1].id);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [files, selectedId, onSelectFile, loading]);
+
+  // Scroll selected item into view
+  useEffect(() => {
+    if (selectedId && listRef.current) {
+      const selectedElement = listRef.current.querySelector(`[data-file-id="${selectedId}"]`);
+      if (selectedElement) {
+        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }, [selectedId]);
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -40,7 +87,7 @@ export default function FileList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div ref={listRef} className="flex-1 overflow-y-auto">
       <div className="divide-y divide-slate-800/30">
         {files.map((file) => {
           const cat = CATEGORY_MAP.get(file.category);
@@ -50,6 +97,7 @@ export default function FileList({
             <button
               key={file.id}
               type="button"
+              data-file-id={file.id}
               onClick={() => onSelectFile(file.id)}
               className={`w-full text-left px-6 py-4 transition-all duration-200 hover:bg-slate-800/30 ${
                 isSelected

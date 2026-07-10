@@ -4,12 +4,20 @@ interface HeaderProps {
   onSearch: (query: string) => void;
   searchQuery: string;
   totalFiles: number;
+  onToggleSidebar?: () => void;
+  onToggleFileList?: () => void;
+  onToggleTheme?: () => void;
+  theme?: 'dark' | 'light';
 }
 
 export default function Header({
   onSearch,
   searchQuery,
   totalFiles,
+  onToggleSidebar,
+  onToggleFileList,
+  onToggleTheme,
+  theme,
 }: HeaderProps) {
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,6 +47,27 @@ export default function Header({
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo & Title */}
           <div className="flex items-center gap-3 shrink-0">
+            {/* Mobile menu button */}
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors"
+              aria-label="Toggle sidebar"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
             <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
               {' '}
               <svg
@@ -112,12 +141,74 @@ export default function Header({
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="shrink-0 text-right">
-            <div className="text-sm font-medium text-white tabular-nums">
-              {totalFiles}
+          {/* Stats & Mobile Toggle */}
+          <div className="flex items-center gap-4 shrink-0">
+            {/* Theme toggle */}
+            {onToggleTheme && (
+              <button
+                type="button"
+                onClick={onToggleTheme}
+                className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                    />
+                  </svg>
+                )}
+              </button>
+            )}
+            {/* Mobile file list toggle */}
+            <button
+              type="button"
+              onClick={onToggleFileList}
+              className="md:hidden p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors"
+              aria-label="Toggle file list"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            </button>
+            <div className="hidden md:block text-right">
+              <div className="text-sm font-medium text-white tabular-nums">
+                {totalFiles}
+              </div>
+              <div className="text-xs text-slate-400">files</div>
             </div>
-            <div className="text-xs text-slate-400">files</div>
           </div>
         </div>
       </div>

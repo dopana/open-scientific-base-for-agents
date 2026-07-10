@@ -1,10 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
+import Prism from 'prismjs';
+import 'prismjs/themes/prism-tomorrow.css';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-markdown';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-sql';
 import { CATEGORY_MAP, formatDate, stripFrontmatter } from '../config';
 import type { FileEntry } from '../types';
 
 interface FileViewerProps {
   file: FileEntry | null;
   loading: boolean;
+  onEdit?: (content: string) => void;
 }
 
 /** Parse markdown into renderable blocks */
@@ -185,9 +199,12 @@ function renderInline(text: string, baseKey: number = 0): React.ReactNode[] {
   });
 }
 
-export default function FileViewer({ file, loading }: FileViewerProps) {
+export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
   const [copied, setCopied] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editContent, setEditContent] = useState('');
   const contentRef = useRef<HTMLDivElement>(null);
+  const editRef = useRef<HTMLTextAreaElement>(null);
 
   // Reset scroll position when file changes — depends on fileKey to trigger on navigation
   const fileKey = file?.id ?? '';
@@ -198,6 +215,38 @@ export default function FileViewer({ file, loading }: FileViewerProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileKey]);
+
+  // Initialize edit content when entering edit mode
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (editing && file) {
+      setEditContent(file.content);
+      // Focus textarea after a short delay
+      const timeout = setTimeout(() => {
+        editRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [editing, file]);
+
+  const handleStartEdit = () => {
+    if (file) {
+      setEditing(true);
+      setEditContent(file.content);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditing(false);
+    setEditContent('');
+  };
+
+  const handleSaveEdit = () => {
+    if (onEdit && editContent) {
+      onEdit(editContent);
+      setEditing(false);
+    }
+  };
 
   const handleCopyContent = async () => {
     if (!file) return;
@@ -266,54 +315,126 @@ export default function FileViewer({ file, loading }: FileViewerProps) {
 
           {/* Action buttons */}
           <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={handleCopyContent}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-400 bg-slate-800/60 hover:bg-slate-700/60 hover:text-slate-200 rounded-lg border border-slate-700/40 transition-all duration-200"
-              title="Copy markdown content"
-            >
-              {copied ? (
-                <>
-                  <svg
-                    className="w-3.5 h-3.5 text-emerald-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    role="img"
-                    aria-label="Copied"
-                  >
-                    <title>Copied</title>
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  Copied!
-                </>
-              ) : (
-                <>
+            {editing ? (
+              <>
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-400 bg-slate-800/60 hover:bg-slate-700/60 hover:text-slate-200 rounded-lg border border-slate-700/40 transition-all duration-200"
+                  title="Cancel edit"
+                >
                   <svg
                     className="w-3.5 h-3.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     strokeWidth={2}
-                    role="img"
-                    aria-label="Copy content"
                   >
-                    <title>Copy content</title>
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      d="M6 18L18 6M6 6l12 12"
                     />
                   </svg>
-                  Copy
-                </>
-              )}
-            </button>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveEdit}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg border border-indigo-500/40 transition-all duration-200"
+                  title="Save changes"
+                >
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Save
+                </button>
+              </>
+            ) : (
+              <>
+                {onEdit && (
+                  <button
+                    type="button"
+                    onClick={handleStartEdit}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-400 bg-slate-800/60 hover:bg-slate-700/60 hover:text-slate-200 rounded-lg border border-slate-700/40 transition-all duration-200"
+                    title="Edit file"
+                  >
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                    Edit
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleCopyContent}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-400 bg-slate-800/60 hover:bg-slate-700/60 hover:text-slate-200 rounded-lg border border-slate-700/40 transition-all duration-200"
+                  title="Copy markdown content"
+                >
+                  {copied ? (
+                    <>
+                      <svg
+                        className="w-3.5 h-3.5 text-emerald-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        role="img"
+                        aria-label="Copied"
+                      >
+                        <title>Copied</title>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        role="img"
+                        aria-label="Copy content"
+                      >
+                        <title>Copy content</title>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Copy
+                    </>
+                  )}
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -395,8 +516,17 @@ export default function FileViewer({ file, loading }: FileViewerProps) {
 
       {/* File Content */}
       <div ref={contentRef} className="flex-1 overflow-y-auto px-8 py-6">
-        <div className="max-w-none space-y-2">
-          {blocks.map((block, blockIdx) => {
+        {editing ? (
+          <textarea
+            ref={editRef}
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            className="w-full h-full min-h-[500px] bg-slate-900/80 border border-slate-800/50 rounded-xl p-4 text-sm text-slate-300 font-mono leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50"
+            placeholder="Edit markdown content..."
+          />
+        ) : (
+          <div className="max-w-none space-y-2">
+            {blocks.map((block, blockIdx) => {
             // Use a derived key to avoid the noArrayIndexKey lint rule
             const blockKey = `block-${blockIdx}`;
             switch (block.type) {
@@ -442,9 +572,16 @@ export default function FileViewer({ file, loading }: FileViewerProps) {
                     key={blockKey}
                     className="bg-slate-900/80 border border-slate-800/50 rounded-xl p-4 my-4 overflow-x-auto"
                   >
-                    <code className="text-sm text-slate-300 font-mono leading-relaxed block whitespace-pre">
-                      {block.code}
-                    </code>
+                    <code
+                      className={`text-sm font-mono leading-relaxed block whitespace-pre language-${block.lang || 'plaintext'}`}
+                      dangerouslySetInnerHTML={{
+                        __html: Prism.highlight(
+                          block.code,
+                          Prism.languages[block.lang as keyof typeof Prism.languages] || Prism.languages.plaintext,
+                          block.lang || 'plaintext'
+                        )
+                      }}
+                    />
                   </pre>
                 );
               case 'ul':
@@ -501,7 +638,8 @@ export default function FileViewer({ file, loading }: FileViewerProps) {
                 return null;
             }
           })}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
