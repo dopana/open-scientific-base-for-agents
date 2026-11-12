@@ -32,9 +32,7 @@ export default function App() {
     const root = document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');
-      root.classList.remove('light');
     } else {
-      root.classList.add('light');
       root.classList.remove('dark');
     }
   }, [theme]);
@@ -160,7 +158,7 @@ export default function App() {
   }, [selectedFile]);
 
   return (
-    <div className="h-screen flex flex-col bg-slate-950 text-slate-200 overflow-hidden">
+    <div className="h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 overflow-hidden transition-colors duration-300">
       <Header
         onSearch={handleSearch}
         searchQuery={searchQuery}
@@ -184,7 +182,7 @@ export default function App() {
         <div
           className={`fixed lg:relative z-50 lg:z-auto transition-transform duration-300 ease-in-out lg:transition-none
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-            w-64 shrink-0 flex flex-col border-r border-slate-800/50 bg-slate-950/20 h-full`}
+            w-64 shrink-0 flex flex-col border-r border-slate-200 dark:border-slate-800/50 bg-slate-50/20 dark:bg-slate-950/20 h-full`}
         >
           <Sidebar
             categories={categories}
@@ -197,17 +195,17 @@ export default function App() {
         <div
           className={`fixed md:relative z-40 md:z-auto transition-transform duration-300 ease-in-out md:transition-none
             ${fileListOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
-            w-full md:w-96 shrink-0 flex flex-col border-r border-slate-800/50 bg-slate-950/20 h-full`}
+            w-full md:w-96 shrink-0 flex flex-col border-r border-slate-200 dark:border-slate-800/50 bg-slate-50/20 dark:bg-slate-950/20 h-full`}
         >
           {/* Panel Header */}
-          <div className="px-6 py-3 border-b border-slate-800/30 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-slate-400 uppercase tracking-wider">
+          <div className="px-6 py-3 border-b border-slate-200 dark:border-slate-800/30 flex items-center justify-between">
+            <h2 className="text-sm font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
               {searchQuery ? 'Search Results' : selectedCategory || 'All Files'}
             </h2>
             <button
               type="button"
               onClick={() => setFileListOpen(false)}
-              className="md:hidden p-1 rounded text-slate-400 hover:text-slate-200"
+              className="md:hidden p-1 rounded text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
               aria-label="Close file list"
             >
               <svg
@@ -235,23 +233,23 @@ export default function App() {
 
           {/* Validation Results */}
           {validationResult && (
-            <div className="mx-4 mt-3 px-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg">
+            <div className="mx-4 mt-3 px-4 py-2 bg-slate-200 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700/50 rounded-lg">
               <p className="text-xs font-medium mb-2">
                 {validationResult.valid ? (
-                  <span className="text-green-400">✓ Valid format</span>
+                  <span className="text-green-600 dark:text-green-400">✓ Valid format</span>
                 ) : (
-                  <span className="text-red-400">✗ Invalid format</span>
+                  <span className="text-red-600 dark:text-red-400">✗ Invalid format</span>
                 )}
               </p>
               {validationResult.errors.length > 0 && (
-                <ul className="text-xs text-red-400 list-disc list-inside space-y-1">
+                <ul className="text-xs text-red-600 dark:text-red-400 list-disc list-inside space-y-1">
                   {validationResult.errors.map((err, i) => (
                     <li key={i}>{err}</li>
                   ))}
                 </ul>
               )}
               {validationResult.warnings.length > 0 && (
-                <ul className="text-xs text-yellow-400 list-disc list-inside space-y-1 mt-2">
+                <ul className="text-xs text-yellow-600 dark:text-yellow-400 list-disc list-inside space-y-1 mt-2">
                   {validationResult.warnings.map((warn, i) => (
                     <li key={i}>{warn}</li>
                   ))}

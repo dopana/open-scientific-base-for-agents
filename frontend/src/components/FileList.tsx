@@ -77,7 +77,7 @@ export default function FileList({
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center max-w-md px-6">
           <div className="text-4xl mb-3">🔍</div>
-          <p className="text-slate-300 font-medium">No files found</p>
+          <p className="text-slate-700 dark:text-slate-300 font-medium">No files found</p>
           <p className="text-sm text-slate-500 mt-1">
             Try a different search term or category filter.
           </p>
@@ -88,7 +88,7 @@ export default function FileList({
 
   return (
     <div ref={listRef} className="flex-1 overflow-y-auto">
-      <div className="divide-y divide-slate-800/30">
+      <div className="divide-y divide-slate-200 dark:divide-slate-800/30">
         {files.map((file) => {
           const cat = CATEGORY_MAP.get(file.category);
           const isSelected = selectedId === file.id;
@@ -99,7 +99,7 @@ export default function FileList({
               type="button"
               data-file-id={file.id}
               onClick={() => onSelectFile(file.id)}
-              className={`w-full text-left px-6 py-4 transition-all duration-200 hover:bg-slate-800/30 ${
+              className={`w-full text-left px-6 py-4 transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800/30 ${
                 isSelected
                   ? 'bg-indigo-500/5 border-l-2 border-indigo-400'
                   : 'border-l-2 border-transparent'
@@ -109,24 +109,24 @@ export default function FileList({
                 <div className="min-w-0 flex-1">
                   <h3
                     className={`font-medium truncate ${
-                      isSelected ? 'text-indigo-300' : 'text-slate-200'
+                      isSelected ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {file.title}
                   </h3>
                   <div className="flex items-center gap-2 mt-1.5">
                     {cat && (
-                      <span className="inline-flex items-center gap-1 text-xs text-slate-400">
+                      <span className="inline-flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
                         <span>{cat.icon}</span>
                         <span>{cat.label}</span>
                       </span>
                     )}
-                    <span className="text-xs text-slate-600">·</span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-400 dark:text-slate-600">·</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-500">
                       v{file.version}
                     </span>
-                    <span className="text-xs text-slate-600">·</span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-400 dark:text-slate-600">·</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-500">
                       {formatDate(file.last_updated)}
                     </span>
                   </div>
@@ -136,20 +136,20 @@ export default function FileList({
                       {file.tags.slice(0, 4).map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium text-slate-400 bg-slate-800/60 rounded-full border border-slate-700/40"
+                          className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800/60 rounded-full border border-slate-300 dark:border-slate-700/40"
                         >
                           {tag}
                         </span>
                       ))}
                       {file.tags.length > 4 && (
-                        <span className="text-[10px] text-slate-500 self-center">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-500 self-center">
                           +{file.tags.length - 4}
                         </span>
                       )}
                     </div>
                   )}
                 </div>
-                <span className="shrink-0 text-slate-600 mt-1">
+                <span className="shrink-0 text-slate-400 dark:text-slate-600 mt-1">
                   <svg
                     className={`w-4 h-4 transition-transform duration-200 ${
                       isSelected ? 'translate-x-0.5 text-indigo-400' : ''

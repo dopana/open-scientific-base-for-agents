@@ -42,7 +42,7 @@ export default function Header({
   );
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/80 border-b border-slate-800/50">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo & Title */}
@@ -51,7 +51,7 @@ export default function Header({
             <button
               type="button"
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors"
+              className="lg:hidden p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
               aria-label="Toggle sidebar"
             >
               <svg
@@ -88,10 +88,10 @@ export default function Header({
               </svg>
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-white tracking-tight">
+              <h1 className="text-lg font-semibold text-slate-900 dark:text-white tracking-tight">
                 Scientific Base
               </h1>
-              <p className="text-xs text-slate-400 hidden sm:block">
+              <p className="text-xs text-slate-600 dark:text-slate-400 hidden sm:block">
                 Open knowledge for AI agents
               </p>
             </div>
@@ -131,10 +131,10 @@ export default function Header({
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
                 placeholder="Search scientific knowledge... (Ctrl+K)"
-                className="w-full pl-10 pr-12 py-2 bg-slate-800/50 border border-slate-700/50 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50 transition-all duration-200"
+                className="w-full pl-10 pr-12 py-2 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700/50 rounded-xl text-sm text-slate-900 dark:text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50 transition-all duration-200"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-xs text-slate-500 bg-slate-800/80 rounded border border-slate-700/50">
+                <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-xs text-slate-500 bg-slate-100 dark:bg-slate-800/80 rounded border border-slate-300 dark:border-slate-700/50">
                   <span className="text-[10px]">⌘</span>K
                 </kbd>
               </div>
@@ -148,7 +148,7 @@ export default function Header({
               <button
                 type="button"
                 onClick={onToggleTheme}
-                className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors"
+                className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? (
@@ -186,7 +186,7 @@ export default function Header({
             <button
               type="button"
               onClick={onToggleFileList}
-              className="md:hidden p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors"
+              className="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
               aria-label="Toggle file list"
             >
               <svg
@@ -204,10 +204,10 @@ export default function Header({
               </svg>
             </button>
             <div className="hidden md:block text-right">
-              <div className="text-sm font-medium text-white tabular-nums">
+              <div className="text-sm font-medium text-slate-900 dark:text-white tabular-nums">
                 {totalFiles}
               </div>
-              <div className="text-xs text-slate-400">files</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">files</div>
             </div>
           </div>
         </div>

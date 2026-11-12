@@ -9,8 +9,6 @@ body {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #020617; /* slate-950 */
-  color: #e2e8f0;
 }
 
 #root {

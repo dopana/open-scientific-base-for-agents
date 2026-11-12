@@ -176,7 +176,7 @@ function renderInline(text: string, baseKey: number = 0): React.ReactNode[] {
         return (
           <code
             key={key}
-            className="px-1.5 py-0.5 text-xs font-mono text-indigo-300 bg-indigo-500/10 rounded border border-indigo-500/20"
+            className="px-1.5 py-0.5 text-xs font-mono text-indigo-600 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-500/10 rounded border border-indigo-200 dark:border-indigo-500/20"
           >
             {token.text}
           </code>
@@ -186,7 +186,7 @@ function renderInline(text: string, baseKey: number = 0): React.ReactNode[] {
           <a
             key={key}
             href={token.href}
-            className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors"
+            className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 underline underline-offset-2 transition-colors"
             target="_blank"
             rel="noreferrer"
           >
@@ -275,7 +275,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center max-w-md px-8">
           <div className="text-5xl mb-4">📖</div>
-          <h2 className="text-xl font-semibold text-slate-300 mb-2">
+          <h2 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
             Select a file
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed">
@@ -293,22 +293,22 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* File Header */}
-      <div className="px-8 py-5 border-b border-slate-800/50 bg-slate-950/50">
+      <div className="px-8 py-5 border-b border-slate-200 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-950/50">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
               {cat && (
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-slate-800/60 px-2 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800/60 px-2 py-0.5 rounded-full">
                   <span>{cat.icon}</span>
                   <span>{cat.label}</span>
                 </span>
               )}
-              <span className="text-xs text-slate-600">·</span>
-              <span className="text-xs text-slate-500 font-mono">
+              <span className="text-xs text-slate-400 dark:text-slate-600">·</span>
+              <span className="text-xs text-slate-500 dark:text-slate-500 font-mono">
                 {file.id}
               </span>
             </div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               {file.title}
             </h2>
           </div>
@@ -320,7 +320,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                 <button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-400 bg-slate-800/60 hover:bg-slate-700/60 hover:text-slate-200 rounded-lg border border-slate-700/40 transition-all duration-200"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800/60 hover:bg-slate-300 dark:hover:bg-slate-700/60 hover:text-slate-900 dark:hover:text-slate-200 rounded-lg border border-slate-300 dark:border-slate-700/40 transition-all duration-200"
                   title="Cancel edit"
                 >
                   <svg
@@ -366,7 +366,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                   <button
                     type="button"
                     onClick={handleStartEdit}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-400 bg-slate-800/60 hover:bg-slate-700/60 hover:text-slate-200 rounded-lg border border-slate-700/40 transition-all duration-200"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800/60 hover:bg-slate-300 dark:hover:bg-slate-700/60 hover:text-slate-900 dark:hover:text-slate-200 rounded-lg border border-slate-300 dark:border-slate-700/40 transition-all duration-200"
                     title="Edit file"
                   >
                     <svg
@@ -388,7 +388,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                 <button
                   type="button"
                   onClick={handleCopyContent}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-400 bg-slate-800/60 hover:bg-slate-700/60 hover:text-slate-200 rounded-lg border border-slate-700/40 transition-all duration-200"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800/60 hover:bg-slate-300 dark:hover:bg-slate-700/60 hover:text-slate-900 dark:hover:text-slate-200 rounded-lg border border-slate-300 dark:border-slate-700/40 transition-all duration-200"
                   title="Copy markdown content"
                 >
                   {copied ? (
@@ -505,7 +505,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
             {file.tags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 rounded-full border border-indigo-500/20"
+                className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium text-indigo-600 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-500/10 rounded-full border border-indigo-200 dark:border-indigo-500/20"
               >
                 #{tag}
               </span>
@@ -521,7 +521,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
             ref={editRef}
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
-            className="w-full h-full min-h-[500px] bg-slate-900/80 border border-slate-800/50 rounded-xl p-4 text-sm text-slate-300 font-mono leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50"
+            className="w-full h-full min-h-[500px] bg-white dark:bg-slate-900/80 border border-slate-300 dark:border-slate-800/50 rounded-xl p-4 text-sm text-slate-900 dark:text-slate-300 font-mono leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50"
             placeholder="Edit markdown content..."
           />
         ) : (
@@ -534,7 +534,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                 return (
                   <h1
                     key={blockKey}
-                    className="text-2xl font-bold text-white mt-6 mb-4"
+                    className="text-2xl font-bold text-slate-900 dark:text-white mt-6 mb-4"
                   >
                     {renderInline(block.text)}
                   </h1>
@@ -543,7 +543,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                 return (
                   <h2
                     key={blockKey}
-                    className="text-xl font-semibold text-slate-200 mt-8 mb-3 pb-2 border-b border-slate-800/50"
+                    className="text-xl font-semibold text-slate-800 dark:text-slate-200 mt-8 mb-3 pb-2 border-b border-slate-300 dark:border-slate-800/50"
                   >
                     {renderInline(block.text)}
                   </h2>
@@ -552,7 +552,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                 return (
                   <h3
                     key={blockKey}
-                    className="text-lg font-medium text-slate-300 mt-6 mb-2"
+                    className="text-lg font-medium text-slate-700 dark:text-slate-300 mt-6 mb-2"
                   >
                     {renderInline(block.text)}
                   </h3>
@@ -561,7 +561,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                 return (
                   <p
                     key={blockKey}
-                    className="text-sm text-slate-300 leading-relaxed"
+                    className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed"
                   >
                     {renderInline(block.text)}
                   </p>
@@ -570,7 +570,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                 return (
                   <pre
                     key={blockKey}
-                    className="bg-slate-900/80 border border-slate-800/50 rounded-xl p-4 my-4 overflow-x-auto"
+                    className="bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-800/50 rounded-xl p-4 my-4 overflow-x-auto"
                   >
                     <code
                       className={`text-sm font-mono leading-relaxed block whitespace-pre language-${block.lang || 'plaintext'}`}
@@ -592,9 +592,9 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                       return (
                         <li
                           key={itemKey}
-                          className="flex items-start gap-2 text-sm text-slate-300"
+                          className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300"
                         >
-                          <span className="text-slate-500 mt-1 shrink-0">
+                          <span className="text-slate-400 dark:text-slate-500 mt-1 shrink-0">
                             •
                           </span>
                           <span>{renderInline(item)}</span>
@@ -612,7 +612,7 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                     {block.items.map((item, itemIdx) => {
                       const itemKey = `${blockKey}-item-${itemIdx}`;
                       return (
-                        <li key={itemKey} className="text-sm text-slate-300">
+                        <li key={itemKey} className="text-sm text-slate-700 dark:text-slate-300">
                           {renderInline(item)}
                         </li>
                       );
@@ -623,14 +623,14 @@ export default function FileViewer({ file, loading, onEdit }: FileViewerProps) {
                 return (
                   <blockquote
                     key={blockKey}
-                    className="border-l-2 border-indigo-500/30 pl-4 py-1 my-2 text-slate-400 italic"
+                    className="border-l-2 border-indigo-500/30 pl-4 py-1 my-2 text-slate-600 dark:text-slate-400 italic"
                   >
                     {renderInline(block.text)}
                   </blockquote>
                 );
               case 'hr':
                 return (
-                  <hr key={blockKey} className="border-slate-800/50 my-6" />
+                  <hr key={blockKey} className="border-slate-300 dark:border-slate-800/50 my-6" />
                 );
               case 'empty':
                 return <div key={blockKey} className="h-3" />;
